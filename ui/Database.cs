@@ -15,18 +15,27 @@ namespace ui
 
         public MySqlConnection GetConnection => new MySqlConnection(_ConnectionString);
 
-
-        public IEnumerable<dynamic> FetchAllBranches()
+        private IEnumerable<dynamic> SQLSelect(String sql)
         {
             var dbConnection = new Database().GetConnection;
             dbConnection.Open();
 
-            var sql = "SELECT * from branches";
             var result = dbConnection.Query(sql);
-
             dbConnection.Close();
             return result;
         }
+
+        public IEnumerable<dynamic> FetchAllBranches()
+        {
+            return SQLSelect("SELECT * from branches");
+        }
+
+        public IEnumerable<dynamic> FetchAllOrderNumbers()
+        {
+            return SQLSelect("SELECT order_number from orders ORDER BY order_number LIMIT 10");
+        }
+
+        
 
     }
 }
