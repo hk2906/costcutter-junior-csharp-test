@@ -30,9 +30,16 @@ namespace ui
             return SQLSelect("SELECT * from branches");
         }
 
-        public IEnumerable<dynamic> FetchAllOrderNumbers()
+        public IEnumerable<dynamic> FetchOrderNumbers(String date)
         {
-            return SQLSelect("SELECT order_number from orders ORDER BY order_number");
+            if (date == null)
+            {
+                return SQLSelect("SELECT order_number from orders ORDER BY order_number");
+            }
+            else
+            {
+                return SQLSelect("SELECT order_number from orders WHERE order_date > \""+date+"\" ORDER BY order_number");
+            }
         }
 
         public IEnumerable<dynamic> FetchOrderDetails(int orderNumber)

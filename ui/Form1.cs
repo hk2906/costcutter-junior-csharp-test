@@ -14,23 +14,30 @@ namespace ui
     public partial class Form1 : Form
     {
         private Database database = new Database();
+        private String errorMessage = "Error: Could not connect to database Click to try again";
 
         public Form1()
         {
             InitializeComponent();
-            refreshOrdersList();
-
+            refreshOrdersList(null);
         }
 
-        private void refreshOrdersList()
+        private void refreshOrdersList(String date)
         {
             ordersList.Items.Clear();
-            
-            foreach (var row in database.FetchAllOrderNumbers())
+            try
             {
-                var row_dict = (IDictionary<string, object>)row;
-                ordersList.Items.Add(row_dict["order_number"]);
+                foreach (var row in database.FetchOrderNumbers(date))
+                {
+                    var row_dict = (IDictionary<string, object>)row;
+                    ordersList.Items.Add(row_dict["order_number"]);
+                }
             }
+            catch (Exception)
+            {
+                ordersList.Items.Add(errorMessage);
+            }
+            
         }
 
         private void refreshOrderDetails(int orderNumber)
@@ -48,13 +55,32 @@ namespace ui
 
         private void ordersList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            int orderNumber = (int)ordersList.SelectedItem;
-            refreshOrderDetails(orderNumber);
+            try
+            {
+                int orderNumber = (int)ordersList.SelectedItem;
+                refreshOrderDetails(orderNumber);
+            }
+            catch (Exception)
+            {
+                refreshOrdersList(null);
+            }
         }
 
         private void orderDetailsGrid_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
 
+        }
+
+        private void dateTimePicker_ValueChanged(object sender, EventArgs e)
+        {
+            Debug.WriteLine(dateTimePicker.Value.ToString("yyy-MM-dd"));
+            refreshOrdersList(dateTimePicker.Value.ToString("yyy-MM-dd"));
+
+        }
+
+        private void clearButton_Click(object sender, EventArgs e)
+        {
+            refreshOrdersList(null);
         }
     }
 }
