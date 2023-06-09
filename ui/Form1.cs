@@ -35,13 +35,26 @@ namespace ui
 
         private void refreshOrderDetails(int orderNumber)
         {
-
+            orderDetailsGrid.Rows.Clear();
+            foreach (var row in database.FetchOrderDetails(orderNumber))
+            {
+                var row_dict = (IDictionary<string, object>)row;
+                foreach (var key in row_dict.Keys)
+                {
+                    orderDetailsGrid.Rows.Add(key, row_dict[key]);
+                }
+            }
         }
 
         private void ordersList_SelectedIndexChanged(object sender, EventArgs e)
         {
             int orderNumber = (int)ordersList.SelectedItem;
             refreshOrderDetails(orderNumber);
+        }
+
+        private void orderDetailsGrid_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 }

@@ -32,10 +32,23 @@ namespace ui
 
         public IEnumerable<dynamic> FetchAllOrderNumbers()
         {
-            return SQLSelect("SELECT order_number from orders ORDER BY order_number LIMIT 10");
+            return SQLSelect("SELECT order_number from orders ORDER BY order_number");
         }
 
-        
+        public IEnumerable<dynamic> FetchOrderDetails(int orderNumber)
+        {
+            String sql = "SELECT "+
+                             "order_number, order_date, sale_price, deposit, "+
+	                         "customers.customer_number, customers.forename, customers.surname, customers.telephone_number, "+
+	                         "branches.branch_name, branches.postcode "+
+                         "FROM orders "+
+                         "INNER JOIN customers ON orders.customer_number = customers.customer_number "+
+                         "INNER JOIN employees ON orders.employee_number = employees.employee_number "+
+                         "INNER JOIN branches ON employees.branch_name = branches.branch_name "+
+                         "AND order_number = " + orderNumber;
+
+            return SQLSelect(sql);
+        }
 
     }
 }
